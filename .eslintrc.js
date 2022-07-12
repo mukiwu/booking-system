@@ -25,6 +25,22 @@ module.exports = {
     'semi': [2, 'never'],
     "vue/multi-word-component-names": ["error", {
       "ignores": ['Home', 'Order']
+    }],
+    "vue/attributes-order": ["error", {
+      "order": [
+        "DEFINITION",
+        "LIST_RENDERING",
+        "CONDITIONALS",
+        "RENDER_MODIFIERS",
+        "GLOBAL",
+        ["UNIQUE", "SLOT"],
+        "TWO_WAY_BINDING",
+        "OTHER_DIRECTIVES",
+        "OTHER_ATTR",
+        "EVENTS",
+        "CONTENT"
+      ],
+      "alphabetical": true
     }]
     // 允许使用console.log
   },
