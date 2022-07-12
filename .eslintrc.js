@@ -24,7 +24,7 @@ module.exports = {
   rules: {
     'semi': [2, 'never'],
     "vue/multi-word-component-names": ["error", {
-      "ignores": ['Home']
+      "ignores": ['Home', 'Order']
     }]
     // 允许使用console.log
   },
