@@ -17,7 +17,11 @@
   <div class="container mx-auto mt-24">
     <p class="text-5xl">Hello, world!</p>
     <p class="text-3xl leading-normal">歡迎來到會議室預定系統</p>
-    <router-view />
+    <div class="flex items-center justify-center mt-10"> 
+      <div class="w-full p-5 bg-white border shadow-md rounded-xl">
+        <router-view />
+      </div>
+    </div>
   </div>  
 </template>
 
