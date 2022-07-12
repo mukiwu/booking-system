@@ -1,3 +1,3 @@
-<tempalte>
-Order
-</tempalte>
+<template>
+  <p>order</p>
+</template>
