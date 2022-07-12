@@ -64,16 +64,11 @@
     return `${year}.${month}.${day}`
   }
   const handleSubmit = () => {
+    const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : { datas: [] }
+    const id = datas[date.value] ? datas[date.value].length : 0
+    console.log('id', id)
     console.log('submit', startTime.value)
   }
-
-  // const checkForm = (form: HTMLFormElement) => {
-  //   console.log(form)
-  //   form.preventDefault()
-  //   if (form.reportValidity()) {
-  //     console.log(date.value, startTime.value, endTime.value)
-  //   }
-  // }
 </script>
 
 <style lang="postcss" scoped>
