@@ -23,7 +23,7 @@
         <ol>
           <li>
             <span class="text-neutral-600">預定日期：</span>
-            <span class="text-neutral-600">{{ dateFormat(new Date(item.date).getTime()).slice(0, 10) }}</span>
+            <span class="text-neutral-600">{{ new Date(item.date).toLocaleDateString('sv-SE').replace(/\-/g, '.') }}</span>
           </li>
           <li>
             <span class="text-neutral-600">預定時間：</span>
@@ -38,7 +38,7 @@
         </ol>
       </div>
       <div class="mt-4 text-slate-500">
-        申請時間：<span>{{ dateFormat(item.apply_date) }}</span>
+        申請時間：<span>{{ new Date(item.apply_date).toLocaleString('sv-SE').replace(/\-/g, '.') }}</span>
       </div>
     </div>
   </template>
@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import { dateFormat } from '../utility/dateFormat'
 import { ref, computed } from 'vue'
 const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : {}
 interface ObjectofTime {
