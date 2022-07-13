@@ -13,15 +13,15 @@
         </div>
         <div class="form__line">
           <div class="form__title--no-line">會議日期</div>
-          <date-picker v-model="date" :enableTimePicker="false" :flow="['year', 'month', 'calendar']" :format="dateFormat" required></date-picker>
+          <date-picker v-model="date" cancelText="取消" :enableTimePicker="false" :flow="['year', 'month', 'calendar']" :format="dateFormat" locale="zh-TW" required selectText="確定"></date-picker>
         </div>
         <div class="form__line">
           <div class="form__title--no-line">會議時間</div>
           {{ startTime }}
           {{ endTime }}
-          <date-picker v-model="startTime" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="開始時間" required :startTime="{hours: 9, minutes: 0}" timePicker></date-picker>
+          <date-picker v-model="startTime" cancelText="取消" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="開始時間" required selectText="確定" :startTime="{hours: 9, minutes: 0}" timePicker></date-picker>
           <div class="mx-3" >至</div>
-          <date-picker v-model="endTime" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="結束時間" required :startTime="startInEndTime()" timePicker></date-picker>
+          <date-picker v-model="endTime" cancelText="取消" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="結束時間" required selectText="確定" :startTime="startInEndTime()" timePicker></date-picker>
         </div>
         <div class="form__line">
           <div class="form__title">預約部門</div>
