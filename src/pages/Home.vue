@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto mt-24">
-    <p class="text-5xl">Hello, world!</p>
+    <p class="text-5xl">Hello, {{ user }}!</p>
     <p class="text-3xl leading-normal">歡迎來到會議室預定系統</p>
     <div class="flex items-center justify-center mt-10"> 
       <div class="w-full p-5 bg-white border shadow-md rounded-xl">
@@ -60,6 +60,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+const user = localStorage.getItem('user')
 const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : {}
 interface ObjectofTime {
   hours?: number | string

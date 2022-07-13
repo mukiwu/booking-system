@@ -11,10 +11,23 @@
         <li class="menu">
           <router-link to="/check">審核</router-link>
         </li>
+        <li class="menu">
+          <button @click="logout()">登出</button>
+        </li>
       </ul>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const logout = () => {
+  localStorage.removeItem('user')
+  router.push('/login')
+}
+</script>
 
 <style lang="postcss" scoped>
   .menu {

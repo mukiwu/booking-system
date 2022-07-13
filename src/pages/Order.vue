@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto mt-24">
-    <p class="text-5xl">Hello, world!</p>
+    <p class="text-5xl">Hello, {{ user }}!</p>
     <p class="text-3xl leading-normal">歡迎來到會議室預定系統</p>
     <div class="flex items-center justify-center mt-10"> 
       <div class="w-full p-5 bg-white border shadow-md rounded-xl">
@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <form ref="form" @submit.prevent="handleSubmit">
+  <form @submit.prevent="handleSubmit">
     <div class="pb-4 mt-4 mb-6 border-b">
         <div class="form__line">
           <div class="form__title">會議主題</div>
@@ -70,6 +70,7 @@
     apply_date: number
     status: string
   }
+  const user = localStorage.getItem('user')
   let orderData = ref<ObjectOfDatas>({
     id: 0,
     title: '',
