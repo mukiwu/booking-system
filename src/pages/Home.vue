@@ -23,7 +23,7 @@
         <ol>
           <li>
             <span class="text-neutral-600">預定日期：</span>
-            <span class="text-neutral-600">{{ item.date }}</span>
+            <span class="text-neutral-600">{{ dateFormat(new Date(item.date).getTime()).slice(0, 10) }}</span>
           </li>
           <li>
             <span class="text-neutral-600">預定時間：</span>
