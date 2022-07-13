@@ -17,9 +17,11 @@
         </div>
         <div class="form__line">
           <div class="form__title--no-line">會議時間</div>
-          <date-picker v-model="startTime" minutesGridIncrement="30" minutesIncrement="30" placeholder="開始時間" required :startTime="{hours: 0, minutes: 0}" timePicker></date-picker>
+          {{ startTime }}
+          {{ endTime }}
+          <date-picker v-model="startTime" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="開始時間" required :startTime="{hours: 9, minutes: 0}" timePicker></date-picker>
           <div class="mx-3" >至</div>
-          <date-picker v-model="endTime" minutesGridIncrement="30" minutesIncrement="30" placeholder="結束時間" required :startTime="{hours: startTime.hours, minutes: 0}" timePicker></date-picker>
+          <date-picker v-model="endTime" :maxTime="{ hours: 18, minutes: 0 }" :minTime="{ hours: 9, minutes: 0 }" minutesGridIncrement="30" minutesIncrement="30" placeholder="結束時間" required :startTime="startInEndTime()" timePicker></date-picker>
         </div>
         <div class="form__line">
           <div class="form__title">預約部門</div>
@@ -45,17 +47,26 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   interface ObjectofTime {
-    hours: number
-    minutes: number
-    seconds: number
+    hours?: number | string
+    minutes?: number | string
+    seconds?: number | string
   }
   let date = ref<string>('')
-  let startTime = ref<ObjectofTime>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  })
-  let endTime = ref<string>('')
+  let startTime = ref<ObjectofTime>()
+  let endTime = ref<ObjectofTime>()
+  const startInEndTime = () => {
+    if (startTime.value) {
+      return {
+        hours: startTime.value.hours,
+        minutes: 0
+      }
+    } else {
+      return {
+        hours: 9,
+        minutes: 0
+      }
+    }
+  }
   const form = ref<HTMLFormElement>()
   const dateFormat = (date: Date) => {
     const day = date.getDate()
@@ -65,7 +76,7 @@
   }
   const handleSubmit = () => {
     const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : { datas: [] }
-    const id = datas[date.value] ? datas[date.value].length : 0
+    const id = datas.datas.length + 1
     console.log('id', id)
     console.log('submit', startTime.value)
   }
