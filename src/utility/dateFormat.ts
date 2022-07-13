@@ -1,6 +1,6 @@
 // timestamp convert to date format
 const dateFormat = (timestamp: number) => {
-  const tmp = new Date(timestamp * 1000)
+  const tmp = new Date(timestamp)
   const year = tmp.getFullYear()
   let month: string | number = tmp.getMonth() + 1
   let day: string | number = tmp.getDate()
