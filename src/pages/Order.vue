@@ -18,7 +18,7 @@
         </div>
         <div class="form__line">
           <div class="form__title--no-line">會議日期</div>
-          <date-picker v-model="orderData.date" cancelText="取消" :enableTimePicker="false" :flow="['year', 'month', 'calendar']" :format="dateFormat" locale="zh-TW" required selectText="確定"></date-picker>
+          <date-picker v-model="orderData.date" cancelText="取消" :enableTimePicker="false" :format="dateFormat" locale="zh-TW" required selectText="確定"></date-picker>
         </div>
         <div class="form__line">
           <div class="form__title--no-line">會議時間</div>

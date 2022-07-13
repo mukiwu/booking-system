@@ -4,6 +4,7 @@ import Login from "../pages/Login.vue"
 import Home from "../pages/Home.vue"
 import Order from "../pages/Order.vue"
 import Check from "../pages/Check.vue"
+import Calendar from "../pages/Calendar.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,6 +31,13 @@ const routes: Array<RouteRecordRaw> = [
     name: "Check",
     components: {
       default: Check,
+      header: Header,
+    },
+  }, {
+    path: "/calendar",
+    name: "Calendar",
+    components: {
+      default: Calendar,
       header: Header,
     },
   }

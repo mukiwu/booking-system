@@ -11,28 +11,33 @@
     <div class="flex items-center space-x-8">
       <button class="button__inactive" :class="{'button__active': checked === '-1'}" @click="check('-1')">全部</button>
       <button class="button__inactive" :class="{'button__active': checked === '0'}" @click="check('0')">審核中</button>
-      <button class="button__inactive" :class="{'button__active': checked === '1'}" @click="check('1')">預訂完成</button>
+      <button class="button__inactive" :class="{'button__active': checked === '1'}" @click="check('1')">預訂成功</button>
       <button class="button__inactive" :class="{'button__active': checked === '2'}" @click="check('2')">預訂失敗</button>
     </div>
   </div>
-  <template v-if="filterDatas" >
+  <template v-if="viewSelfData && viewSelfData.length" >
     <div v-for="item in filterDatas" :key="item.id" class="pb-4 mt-4 mb-6 border-b">
-      <div class="flex">
-        <div class="mb-3 mr-1 text-xl font-bold">{{ item.title }}</div>
-        <div> 
+      <div class="flex items-center">
+        <div class="mr-1 text-xl font-bold">{{ item.title }}</div>
+        <div>
           <span class="inline-block px-1 py-1 text-xs text-white rounded-md bg-rose-400" :class="{'bg-rose-400': item.status === '0', 'bg-blue-400': item.status === '1', 'bg-gray-400': item.status === '2'}"
           >{{ convertStatus(item.status) }}</span>
         </div>
+        <div v-if="permission === 'admin'" class="ml-3 text-sm text-neutral-600">
+          <input :id="`success_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`success_${item.id}`"><label :for="`success_${item.id}`">通過</label>
+          <input :id="`fail_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`fail_${item.id}`"><label :for="`fail_${item.id}`">駁回</label>
+          <button class="px-2 ml-2 border rounded-lg border-neutral-300 bg-neutral-100" @click="checkOrder()">確認</button>
+        </div>
       </div>
-      <div class="text-sm text-neutral-600">
+      <div class=" text-slate-600">
         <ol>
           <li>
-            <span class="text-neutral-600">預定日期：</span>
-            <span class="text-neutral-600">{{ new Date(item.date).toLocaleDateString('sv-SE').replace(/\-/g, '.') }}</span>
+            <span>預定日期：</span>
+            <span>{{ new Date(item.date).toLocaleDateString('sv-SE').replace(/\-/g, '.') }}</span>
           </li>
           <li>
-            <span class="text-neutral-600">預定時間：</span>
-            <span class="text-neutral-600">{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
+            <span>預定時間：</span>
+            <span>{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
           </li>
           <li>
             <span>預約部門：{{ convertDep(item.department) }}</span>
@@ -42,10 +47,10 @@
           </li>
         </ol>
       </div>
-      <div class="mt-4 text-slate-500">
+      <div class="mt-4 text-sm text-neutral-600">
         申請時間：<span>{{ new Date(item.apply_date).toLocaleString('sv-SE').replace(/\-/g, '.') }}</span>
       </div>
-      <div class="mt-1 text-slate-500">
+      <div class="mt-1 text-sm text-neutral-600">
         申請人：<span>{{ item.apply_user }}</span>
       </div>
     </div>
@@ -62,9 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 const user = localStorage.getItem('user')
-const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : {}
+const permission = localStorage.getItem('permission')
+const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '') : ''
 interface ObjectofTime {
   hours?: number | string
   minutes?: number | string
@@ -82,20 +88,27 @@ interface ObjectOfDatas {
   apply_date: number
   status: string
 }
-const viewSelfData = datas.datas.filter((item: { apply_user: string }) => {
-  const permission = localStorage.getItem('permission')
-  if (permission !== 'admin') return item.apply_user === user
-  else return item
+let viewSelfData = ref<ObjectOfDatas[]>()
+let filterDatas = ref<ObjectOfDatas[]>()
+onMounted(() => {
+  if (datas) {
+    console.log('in', datas)
+    viewSelfData.value = datas.datas.filter((item: { apply_user: string }) => {
+      if (permission !== 'admin') return item.apply_user === user
+      else return item
+    })
+    filterDatas.value = viewSelfData.value
+  }
 })
-let filterDatas = ref<ObjectOfDatas[]>(viewSelfData)
 let checked = ref<string>('-1')
+let status = ref<string>('')
 const convertStatus = computed(() => { 
   return function (val: string) {
     switch (val) {
       case '0':
         return '審核中'
       case '1':
-        return '預定完成'
+        return '預定成功'
       case '2':
         return '預定失敗'
     }
@@ -120,14 +133,40 @@ const convertDep = computed(() => {
 const check = computed(() => {
   return function (status: string) {
     checked.value = status
-    if (status === '-1') filterDatas.value = viewSelfData
-    else filterDatas.value = viewSelfData.filter((item: { status: string }) => item.status === status)
-    // localStorage.setItem('checked', status)
+    if (status === '-1') filterDatas.value = viewSelfData.value
+    else if (viewSelfData.value) {
+      filterDatas.value = viewSelfData.value.filter((item: { status: string }) => item.status === status)
+    }
   }
 })
+const checkOrder = () => {
+  const checkStatus: string = status.value.split('_')[0]
+  const id: string = status.value.split('_')[1]
+  datas.datas = filterDatas.value.map((item: { id: number, status: string }) => {
+    if (item.id === Number(id)) {
+      console.log('checkStatus', checkStatus, item.status)
+      switch(checkStatus) {
+        case 'success':
+          item.status = '1'
+          break
+        case 'fail':
+          item.status = '2'
+          break
+      }
+    }
+    return item
+  })
+  localStorage.setItem('datas', JSON.stringify(datas))
+}
 </script>
 
 <style lang="postcss" scoped>
+ol {
+  @apply mt-3 ml-5
+}
+li {
+  @apply my-1 list-disc
+}
 .button__active {
   @apply text-white !bg-neutral-800
 }

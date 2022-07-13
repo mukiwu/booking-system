@@ -6,7 +6,7 @@
           <router-link to="/order">預約</router-link>
         </li>
         <li class="menu">
-          <router-link to="/">查詢</router-link>
+          <router-link to="/">列表</router-link>
         </li>
         <li v-if="permission === 'admin'" class="menu">
           <router-link to="/check">審核</router-link>
