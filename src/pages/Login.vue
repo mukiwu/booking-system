@@ -34,20 +34,24 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 interface ObjectofUsers {
   account: string
-  password: string
+  password: string,
+  permission?: string
 }
-const Users: ObjectofUsers[] = [
+const members: ObjectofUsers[] = [
   {
     account: 'mason',
-    password: 'mason'
+    password: 'mason',
+    permission: 'admin'
   },
   {
     account: 'muki',
-    password: 'muki'
+    password: 'muki',
+    permission: 'user'
   },
   {
     account: 'zoe',
-    password: 'zoe'
+    password: 'zoe',
+    permission: 'user'
   }
 ]
 let form = ref<ObjectofUsers>({
@@ -57,9 +61,10 @@ let form = ref<ObjectofUsers>({
 const handleSubmit = () => {
   const account = form.value.account
   const password = form.value.password
-  const user = Users.find(user => user.account === account && user.password === password)
-  if (user) {
+  const user = members.find(user => user.account === account && user.password === password)
+  if (user && user.permission) {
     localStorage.setItem('user', account)
+    localStorage.setItem('permission', user.permission)
     router.push('/')
   } else {
     alert('帳號或密碼錯誤')

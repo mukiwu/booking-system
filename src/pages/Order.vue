@@ -70,7 +70,7 @@
     apply_date: number
     status: string
   }
-  const user = localStorage.getItem('user')
+  const user: string = localStorage.getItem('user') || ''
   let orderData = ref<ObjectOfDatas>({
     id: 0,
     title: '',
@@ -79,7 +79,7 @@
     endTime: null,
     department: '',
     attends: 0,
-    apply_user: '',
+    apply_user: user,
     apply_date: new Date().getTime(),
     status: '0'
   })
@@ -110,7 +110,14 @@
     orderData.value.endTime = zeroFill(orderData.value.endTime)
     dataStorage.datas.push(orderData.value)
     localStorage.setItem('datas', JSON.stringify(dataStorage))
-    orderData.value = Object.assign({ department: '', attends: 0 })
+    orderData.value = Object.assign({
+      id: 0,
+      department: '',
+      attends: 0,
+      apply_user: user,
+      apply_date: new Date().getTime(),
+      status: '0'
+    })
     orderSuccess.value = '預定成功'
   }
   const zeroFill = (time: ObjectofTime | null) => {

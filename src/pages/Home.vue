@@ -45,6 +45,9 @@
       <div class="mt-4 text-slate-500">
         申請時間：<span>{{ new Date(item.apply_date).toLocaleString('sv-SE').replace(/\-/g, '.') }}</span>
       </div>
+      <div class="mt-1 text-slate-500">
+        申請人：<span>{{ item.apply_user }}</span>
+      </div>
     </div>
   </template>
   <template v-else>
@@ -79,7 +82,12 @@ interface ObjectOfDatas {
   apply_date: number
   status: string
 }
-let filterDatas = ref<ObjectOfDatas[]>(datas.datas)
+const viewSelfData = datas.datas.filter((item: { apply_user: string }) => {
+  const permission = localStorage.getItem('permission')
+  if (permission !== 'admin') return item.apply_user === user
+  else return item
+})
+let filterDatas = ref<ObjectOfDatas[]>(viewSelfData)
 let checked = ref<string>('-1')
 const convertStatus = computed(() => { 
   return function (val: string) {
@@ -112,9 +120,8 @@ const convertDep = computed(() => {
 const check = computed(() => {
   return function (status: string) {
     checked.value = status
-    if (status === '-1') filterDatas.value = datas.datas
-    else filterDatas.value = datas.datas.filter((item: { status: string }) => item.status === status)
-    console.log('filterDatas', filterDatas)
+    if (status === '-1') filterDatas.value = viewSelfData
+    else filterDatas.value = viewSelfData.filter((item: { status: string }) => item.status === status)
     // localStorage.setItem('checked', status)
   }
 })

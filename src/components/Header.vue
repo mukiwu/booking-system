@@ -8,7 +8,7 @@
         <li class="menu">
           <router-link to="/">查詢</router-link>
         </li>
-        <li class="menu">
+        <li v-if="permission === 'admin'" class="menu">
           <router-link to="/check">審核</router-link>
         </li>
         <li class="menu">
@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
+const permission = localStorage.getItem('permission')
 const logout = () => {
   localStorage.removeItem('user')
   router.push('/login')
