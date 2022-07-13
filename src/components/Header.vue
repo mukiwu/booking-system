@@ -9,7 +9,7 @@
           <router-link to="/">列表</router-link>
         </li>
         <li v-if="permission === 'admin'" class="menu">
-          <router-link to="/check">審核</router-link>
+          <router-link to="/calendar">月曆</router-link>
         </li>
         <li class="menu">
           <button @click="logout()">登出</button>
