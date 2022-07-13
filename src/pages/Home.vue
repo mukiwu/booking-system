@@ -30,7 +30,7 @@
             <span class="text-neutral-600">{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
           </li>
           <li>
-            <span>預約部門：{{ item.department }}</span>
+            <span>預約部門：{{ convertDep(item.department) }}</span>
           </li>
           <li>
             <span>與會人數：{{ item.attends }} 人</span>
@@ -82,6 +82,22 @@ const convertStatus = computed(() => {
         return '預定完成'
       case '2':
         return '預定失敗'
+    }
+  }
+})
+const convertDep = computed(() => { 
+  return function (val: string) {
+    switch (val) {
+      case '0':
+        return '總經理室'
+      case '1':
+        return 'IT 部門'
+      case '2':
+        return 'OT 部門'
+      case '3':
+        return 'PM 部門'
+      case '4':
+        return 'FAE 部門'
     }
   }
 })

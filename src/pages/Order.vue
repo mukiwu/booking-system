@@ -87,7 +87,6 @@
       }
     }
   }
-  const form = ref<HTMLFormElement>()
   let orderSuccess = ref<string>('')
   const dateFormat = (date: Date) => {
     const day = date.getDate()
@@ -102,7 +101,7 @@
     orderData.value.endTime = zeroFill(orderData.value.endTime)
     dataStorage.datas.push(orderData.value)
     localStorage.setItem('datas', JSON.stringify(dataStorage))
-    form.value.reset()
+    orderData.value = Object.assign({ department: '', attends: 0 })
     orderSuccess.value = '預定成功'
   }
   const zeroFill = (time: ObjectofTime | null) => {
