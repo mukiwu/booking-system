@@ -46,9 +46,9 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   interface ObjectofTime {
-    hours?: number | string
-    minutes?: number | string
-    seconds?: number | string
+    hours?: string | number
+    minutes?: string | number
+    seconds?: string | number
   }
   interface ObjectOfDatas {
     id: number
@@ -98,10 +98,19 @@
   const handleSubmit = () => {
     const dataStorage = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : { datas: [] }
     orderData.value.id = dataStorage.datas.length + 1
+    orderData.value.startTime = zeroFill(orderData.value.startTime)
+    orderData.value.endTime = zeroFill(orderData.value.endTime)
     dataStorage.datas.push(orderData.value)
     localStorage.setItem('datas', JSON.stringify(dataStorage))
     form.value.reset()
     orderSuccess.value = '預定成功'
+  }
+  const zeroFill = (time: ObjectofTime | null) => {
+    if (time && time.hours !== undefined && time.minutes !== undefined) {
+      time.hours = time.hours < 10 ? `0${time.hours}` : time.hours.toString()
+      time.minutes = time.minutes < 10 ? `0${time.minutes}` : time.minutes.toString()
+    }
+    return time
   }
 </script>
 

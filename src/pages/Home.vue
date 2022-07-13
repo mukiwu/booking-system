@@ -23,7 +23,11 @@
         <ol>
           <li>
             <span class="text-neutral-600">預定日期：</span>
-            <span class="text-neutral-600">{{ dateFormat(item.start_date) }} ~ {{ dateFormat(item.end_date) }}</span>
+            <span class="text-neutral-600">{{ item.date }}</span>
+          </li>
+          <li>
+            <span class="text-neutral-600">預定時間：</span>
+            <span class="text-neutral-600">{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
           </li>
           <li>
             <span>預約部門：{{ item.department }}</span>
@@ -48,14 +52,19 @@
 
 <script setup lang="ts">
 import { dateFormat } from '../utility/dateFormat'
-// import defaultDatas from '../json/default.json'
 import { ref, computed } from 'vue'
 const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '{}') : {}
+interface ObjectofTime {
+  hours?: number | string
+  minutes?: number | string
+  seconds?: number | string
+}
 interface ObjectOfDatas {
   id: number
-  title: string
-  start_date: number
-  end_date: number
+  title: string,
+  date: string,
+  startTime: ObjectofTime
+  endTime: ObjectofTime
   department: string
   attends: number
   apply_user: string,
