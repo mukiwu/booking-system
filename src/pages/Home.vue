@@ -1,5 +1,10 @@
 <template>
-  <div class="flex items-center justify-between w-full pb-3 border-b">
+  <div class="container mx-auto mt-24">
+    <p class="text-5xl">Hello, world!</p>
+    <p class="text-3xl leading-normal">歡迎來到會議室預定系統</p>
+    <div class="flex items-center justify-center mt-10"> 
+      <div class="w-full p-5 bg-white border shadow-md rounded-xl">
+        <div class="flex items-center justify-between w-full pb-3 border-b">
     <div class="flex items-center space-x-3">
       <div class="text-lg font-bold text-slate-700">預定一覽</div>
     </div>
@@ -48,6 +53,9 @@
       <p><router-link class="inline-block px-2 py-1 mt-2 text-white transition-all duration-300 bg-blue-500 rounded-lg hover:bg-rose-500" to="/order">點我預約</router-link></p>
     </div>
   </template>
+      </div>
+    </div>
+  </div>  
 </template>
 
 <script setup lang="ts">

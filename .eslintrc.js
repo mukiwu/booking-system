@@ -24,7 +24,7 @@ module.exports = {
   rules: {
     'semi': [2, 'never'],
     "vue/multi-word-component-names": ["error", {
-      "ignores": ['Home', 'Order']
+      "ignores": ['Home', 'Order', 'Header']
     }],
     "vue/attributes-order": ["error", {
       "order": [

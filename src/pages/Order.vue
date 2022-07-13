@@ -1,5 +1,10 @@
 <template>
-  <div class="flex items-center justify-between w-full pb-3 border-b">
+  <div class="container mx-auto mt-24">
+    <p class="text-5xl">Hello, world!</p>
+    <p class="text-3xl leading-normal">歡迎來到會議室預定系統</p>
+    <div class="flex items-center justify-center mt-10"> 
+      <div class="w-full p-5 bg-white border shadow-md rounded-xl">
+        <div class="flex items-center justify-between w-full pb-3 border-b">
     <div class="flex items-center space-x-3">
       <div class="text-lg font-bold text-slate-700">預約會議室</div>
     </div>
@@ -41,6 +46,9 @@
     <button class="px-3 py-1 rounded-lg bg-neutral-200">送出</button>
     <div class="inline-block ml-3 text-rose-600">{{ orderSuccess }}</div>
   </form>
+      </div>
+    </div>
+  </div>  
 </template>
 
 <script setup lang="ts">
