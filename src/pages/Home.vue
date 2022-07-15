@@ -15,7 +15,6 @@
       <button class="button__inactive" :class="{'button__active': checked === '2'}" @click="check('2')">預訂失敗</button>
     </div>
   </div>
-  {{ filterData }}
   <template v-if="viewSelfData" >
     <div v-for="(list, index) in filterData" :key="index" class="pb-4 mt-4 mb-6 border-b">
       {{ (list .date).replace(/\-/g, '.') }} ({{ new Date(list .date).toLocaleDateString('zh-TW', { weekday: 'narrow' }) }})
@@ -82,7 +81,7 @@ interface ObjectofTime {
 interface ObjectOfDatas {
   id?: number
   title?: string,
-  date?: string,
+  date?: string | Date,
   startTime: ObjectofTime
   endTime: ObjectofTime
   department: string
@@ -91,10 +90,6 @@ interface ObjectOfDatas {
   apply_date: number
   status: string
 }
-// let viewSelfData = datas.datas.filter((item: { apply_user: string }) => {
-//   if (permission !== 'admin') return item.apply_user === user
-//   else return item
-// })
 onMounted(() => {
   if ( datas.datas.length > 0) {
     let tmpData = datas.datas.filter((item: { apply_user: string }) => {
@@ -102,7 +97,6 @@ onMounted(() => {
       else return item
     })
     if (tmpData[0] && tmpData[0].date) {
-      console.log('tmpData', tmpData)
       viewSelfData.value[0].date = tmpData[0].date.slice(0, 10)
       for (let i = 0; i < tmpData.length; i++) {
         let count = 0
@@ -122,7 +116,6 @@ onMounted(() => {
     }
     filterData.value = viewSelfData.value
   }
-  console.log('viewSelfData', viewSelfData.value)
 })
 let checked = ref<string>('-1')
 let status = ref<string>('')
@@ -157,19 +150,41 @@ const convertDep = computed(() => {
 const check = computed(() => {
   return function (status: string) {
     checked.value = status
+    const tmpData = JSON.parse(JSON.stringify(viewSelfData.value))
     if (status === '-1') filterData.value = viewSelfData.value
     else {
-      filterData.value = viewSelfData.value.filter((item: { data: ObjectOfDatas[] }) => {
-        return item.data.filter((item: { status: string }) => item.status === status ).length > 0
-      })
+      filterData.value = tmpData.reduce((previousValue, item) => {
+        let one = status
+        item.data = item.data.filter((item2: { status: string }) => item2.status === one)
+        if (item.data.length > 0) previousValue.push(item)
+        return previousValue
+      },[])
     }
   }
 })
 const checkOrder = () => {
   const checkStatus: string = status.value.split('_')[0]
   const id: string = status.value.split('_')[1]
-  datas.datas.forEach((item: { id: number, status: string }) => {
+  viewSelfData.value.map((item: { data: ObjectOfDatas[]}) => {
+    item.data.map((item: { id: number, status: string}) => {
+      if (item.id === Number(id)) {
+      switch(checkStatus) {
+        case 'success':
+          item.status = '1'
+          break
+        case 'fail':
+          item.status = '2'
+          break
+        }
+      }
+      return item
+    })
+    return item
+  })
+
+  datas.datas.map((item: { id: number, status: string }) => {
     if (item.id === Number(id)) {
+      console.log('checkStatus', checkStatus, item.status)
       switch(checkStatus) {
         case 'success':
           item.status = '1'
@@ -179,8 +194,8 @@ const checkOrder = () => {
           break
       }
     }
+    return item
   })
-  console.log('view', filterDatas.value)
   localStorage.setItem('datas', JSON.stringify(datas))
 }
 </script>
