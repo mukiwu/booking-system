@@ -15,43 +15,44 @@
       <button class="button__inactive" :class="{'button__active': checked === '2'}" @click="check('2')">預訂失敗</button>
     </div>
   </div>
-  <template v-if="viewSelfData && viewSelfData.length" >
-    <div v-for="item in filterDatas" :key="item.id" class="pb-4 mt-4 mb-6 border-b">
-      <div class="flex items-center">
-        <div class="mr-1 text-xl font-bold">{{ item.title }}</div>
-        <div>
-          <span class="inline-block px-1 py-1 text-xs text-white rounded-md bg-rose-400" :class="{'bg-rose-400': item.status === '0', 'bg-blue-400': item.status === '1', 'bg-gray-400': item.status === '2'}"
-          >{{ convertStatus(item.status) }}</span>
+  {{ filterData }}
+  <template v-if="viewSelfData" >
+    <div v-for="(list, index) in filterData" :key="index" class="pb-4 mt-4 mb-6 border-b">
+      {{ (list .date).replace(/\-/g, '.') }} ({{ new Date(list .date).toLocaleDateString('zh-TW', { weekday: 'narrow' }) }})
+      <div class="flex flex-row">
+        <div v-for="(item, index) in list.data" :key="index" class="p-2 mx-2 my-2 border rounded-md basis-1/4 bg-gray-50 last:mr-0 first:ml-0">
+          <div class="flex items-center">
+            <div class="mr-2">{{ item.title }}</div>
+            <div>
+              <span class="inline-block px-1 py-1 text-xs text-white rounded-md bg-rose-400" :class="{'bg-rose-400': item.status === '0', 'bg-blue-400': item.status === '1', 'bg-gray-400': item.status === '2'}"
+              >{{ convertStatus(item.status) }}</span>
+              {{ item.status }}
+            </div>
+          </div>
+          <ol>
+            <li>
+              <span>預定時間：</span>
+              <span>{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
+            </li>
+            <li>
+              <span>預約部門：{{ convertDep(item.department) }}</span>
+            </li>
+            <li>
+              <span>與會人數：{{ item.attends }} 人</span>
+            </li>
+          </ol>
+          <div class="pt-2 pl-5 mt-2 text-sm text-gray-600 border-t border-gray-300">
+            申請時間：<span>{{ new Date(item.apply_date).toLocaleString('sv-SE').replace(/\-/g, '.') }}</span>
+          </div>
+          <div class="pl-5 mt-1 text-sm text-gray-600">
+            申請人：<span>{{ item.apply_user }}</span>
+          </div>
+          <div v-if="permission === 'admin'" class="mt-2 ml-4 text-sm text-gray-600">
+            <input :id="`success_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`success_${item.id}`"><label :for="`success_${item.id}`">通過</label>
+            <input :id="`fail_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`fail_${item.id}`"><label :for="`fail_${item.id}`">駁回</label>
+            <button class="px-2 ml-2 border rounded-lg border-neutral-300 bg-neutral-100" @click="checkOrder()">確認</button>
+          </div>
         </div>
-        <div v-if="permission === 'admin'" class="ml-3 text-sm text-neutral-600">
-          <input :id="`success_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`success_${item.id}`"><label :for="`success_${item.id}`">通過</label>
-          <input :id="`fail_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`fail_${item.id}`"><label :for="`fail_${item.id}`">駁回</label>
-          <button class="px-2 ml-2 border rounded-lg border-neutral-300 bg-neutral-100" @click="checkOrder()">確認</button>
-        </div>
-      </div>
-      <div class=" text-slate-600">
-        <ol>
-          <li>
-            <span>預定日期：</span>
-            <span>{{ new Date(item.date).toLocaleDateString('sv-SE').replace(/\-/g, '.') }}</span>
-          </li>
-          <li>
-            <span>預定時間：</span>
-            <span>{{ item.startTime.hours }}:{{ item.startTime.minutes }} ~ {{ item.endTime.hours }}:{{ item.endTime.minutes }}</span>
-          </li>
-          <li>
-            <span>預約部門：{{ convertDep(item.department) }}</span>
-          </li>
-          <li>
-            <span>與會人數：{{ item.attends }} 人</span>
-          </li>
-        </ol>
-      </div>
-      <div class="mt-4 text-sm text-neutral-600">
-        申請時間：<span>{{ new Date(item.apply_date).toLocaleString('sv-SE').replace(/\-/g, '.') }}</span>
-      </div>
-      <div class="mt-1 text-sm text-neutral-600">
-        申請人：<span>{{ item.apply_user }}</span>
       </div>
     </div>
   </template>
@@ -71,15 +72,17 @@ import { ref, computed, onMounted } from 'vue'
 const user = localStorage.getItem('user')
 const permission = localStorage.getItem('permission')
 const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '') : ''
+const viewSelfData = ref<ObjectOfDatas[]>([{ date: '', data: [] }])
+const filterData = ref<ObjectOfDatas[]>([{ date: '', data: [] }])
 interface ObjectofTime {
   hours?: number | string
   minutes?: number | string
   seconds?: number | string
 }
 interface ObjectOfDatas {
-  id: number
-  title: string,
-  date: string,
+  id?: number
+  title?: string,
+  date?: string,
   startTime: ObjectofTime
   endTime: ObjectofTime
   department: string
@@ -88,17 +91,38 @@ interface ObjectOfDatas {
   apply_date: number
   status: string
 }
-let viewSelfData = ref<ObjectOfDatas[]>()
-let filterDatas = ref<ObjectOfDatas[]>()
+// let viewSelfData = datas.datas.filter((item: { apply_user: string }) => {
+//   if (permission !== 'admin') return item.apply_user === user
+//   else return item
+// })
 onMounted(() => {
-  if (datas) {
-    console.log('in', datas)
-    viewSelfData.value = datas.datas.filter((item: { apply_user: string }) => {
+  if ( datas.datas.length > 0) {
+    let tmpData = datas.datas.filter((item: { apply_user: string }) => {
       if (permission !== 'admin') return item.apply_user === user
       else return item
     })
-    filterDatas.value = viewSelfData.value
+    if (tmpData[0] && tmpData[0].date) {
+      console.log('tmpData', tmpData)
+      viewSelfData.value[0].date = tmpData[0].date.slice(0, 10)
+      for (let i = 0; i < tmpData.length; i++) {
+        let count = 0
+        for (let j = 0; j < viewSelfData.value.length; j++) {
+          if (tmpData[i].date.slice(0, 10) === viewSelfData.value[j].date) {
+            viewSelfData.value[j].data.push(tmpData[i])
+          } else {
+            count = count + 1
+            if (count === viewSelfData.value.length) {
+              let order = viewSelfData.value.length
+              viewSelfData.value[order] = { date: '', data: [] }
+              viewSelfData.value[order].date = tmpData[i].date.slice(0, 10)
+            }
+          }
+        }
+      }
+    }
+    filterData.value = viewSelfData.value
   }
+  console.log('viewSelfData', viewSelfData.value)
 })
 let checked = ref<string>('-1')
 let status = ref<string>('')
@@ -133,18 +157,19 @@ const convertDep = computed(() => {
 const check = computed(() => {
   return function (status: string) {
     checked.value = status
-    if (status === '-1') filterDatas.value = viewSelfData.value
-    else if (viewSelfData.value) {
-      filterDatas.value = viewSelfData.value.filter((item: { status: string }) => item.status === status)
+    if (status === '-1') filterData.value = viewSelfData.value
+    else {
+      filterData.value = viewSelfData.value.filter((item: { data: ObjectOfDatas[] }) => {
+        return item.data.filter((item: { status: string }) => item.status === status ).length > 0
+      })
     }
   }
 })
 const checkOrder = () => {
   const checkStatus: string = status.value.split('_')[0]
   const id: string = status.value.split('_')[1]
-  datas.datas = filterDatas.value.map((item: { id: number, status: string }) => {
+  datas.datas.forEach((item: { id: number, status: string }) => {
     if (item.id === Number(id)) {
-      console.log('checkStatus', checkStatus, item.status)
       switch(checkStatus) {
         case 'success':
           item.status = '1'
@@ -154,15 +179,15 @@ const checkOrder = () => {
           break
       }
     }
-    return item
   })
+  console.log('view', filterDatas.value)
   localStorage.setItem('datas', JSON.stringify(datas))
 }
 </script>
 
 <style lang="postcss" scoped>
 ol {
-  @apply mt-3 ml-5
+  @apply mt-3 ml-5 text-slate-600
 }
 li {
   @apply my-1 list-disc
