@@ -15,17 +15,16 @@
       <button class="button__inactive" :class="{'button__active': checked === '2'}" @click="check('2')">預訂失敗</button>
     </div>
   </div>
-  <template v-if="viewSelfData" >
+  <template v-if="viewSelfData && viewSelfData[0].data.length > 0" >
     <div v-for="(list, index) in filterData" :key="index" class="pb-4 mt-4 mb-6 border-b">
       {{ (list .date).replace(/\-/g, '.') }} ({{ new Date(list .date).toLocaleDateString('zh-TW', { weekday: 'narrow' }) }})
-      <div class="flex flex-row">
-        <div v-for="(item, index) in list.data" :key="index" class="p-2 mx-2 my-2 border rounded-md basis-1/4 bg-gray-50 last:mr-0 first:ml-0">
+      <div class="flex flex-wrap">
+        <div v-for="(item, index) in list.data" :key="index" class="w-[24%] p-2 mx-2 my-2 border rounded-md bg-gray-50 [&:nth-child(4n+1)]:ml-0 [&:nth-child(4n)]:mr-0">
           <div class="flex items-center">
             <div class="mr-2">{{ item.title }}</div>
             <div>
               <span class="inline-block px-1 py-1 text-xs text-white rounded-md bg-rose-400" :class="{'bg-rose-400': item.status === '0', 'bg-blue-400': item.status === '1', 'bg-gray-400': item.status === '2'}"
               >{{ convertStatus(item.status) }}</span>
-              {{ item.status }}
             </div>
           </div>
           <ol>
