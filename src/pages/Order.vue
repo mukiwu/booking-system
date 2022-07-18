@@ -51,27 +51,10 @@
   </div>  
 </template>
 
-<script setup lang="ts">
+<script setup>
   import { ref } from 'vue'
-  interface ObjectofTime {
-    hours?: string | number
-    minutes?: string | number
-    seconds?: string | number
-  }
-  interface ObjectOfDatas {
-    id: number
-    title: string
-    date: string
-    startTime: ObjectofTime | null
-    endTime: ObjectofTime | null
-    department: string
-    attends: number
-    apply_user: string
-    apply_date: number
-    status: string
-  }
-  const user: string = localStorage.getItem('user') || ''
-  let orderData = ref<ObjectOfDatas>({
+  const user = localStorage.getItem('user') || ''
+  let orderData = ref({
     id: 0,
     title: '',
     date: '',
@@ -96,8 +79,8 @@
       }
     }
   }
-  let orderSuccess = ref<string>('')
-  const dateFormat = (date: Date) => {
+  let orderSuccess = ref('')
+  const dateFormat = (date) => {
     const day = date.getDate()
     const month = date.getMonth() + 1
     const year = date.getFullYear()
@@ -120,7 +103,7 @@
     })
     orderSuccess.value = '預定成功'
   }
-  const zeroFill = (time: ObjectofTime | null) => {
+  const zeroFill = (time) => {
     if (time && time.hours !== undefined && time.minutes !== undefined) {
       time.hours = time.hours < 10 ? `0${time.hours}` : time.hours.toString()
       time.minutes = time.minutes < 10 ? `0${time.minutes}` : time.minutes.toString()

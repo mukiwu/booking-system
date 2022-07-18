@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 import Header from '../components/Header.vue'
 import Login from "../pages/Login.vue"
 import Home from "../pages/Home.vue"
 import Order from "../pages/Order.vue"
 import Calendar from "../pages/Calendar.vue"
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: "/login",
     name: "Login",

@@ -28,16 +28,11 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-interface ObjectofUsers {
-  account: string
-  password: string,
-  permission?: string
-}
-const members: ObjectofUsers[] = [
+const members = [
   {
     account: 'mason',
     password: 'mason',
@@ -54,7 +49,7 @@ const members: ObjectofUsers[] = [
     permission: 'user'
   }
 ]
-let form = ref<ObjectofUsers>({
+let form = ref({
   account: '',
   password: ''
 })

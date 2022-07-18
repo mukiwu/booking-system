@@ -17,7 +17,7 @@
   </div>
   <template v-if="viewSelfData && viewSelfData[0].data.length > 0" >
     <div v-for="(list, index) in filterData" :key="index" class="pb-4 mt-4 mb-6 border-b">
-      {{ (list .date).replace(/\-/g, '.') }} ({{ new Date(list .date).toLocaleDateString('zh-TW', { weekday: 'narrow' }) }})
+      {{ (list.date).replace(/\-/g, '.') }} ({{ new Date(list.date).toLocaleDateString('zh-TW', { weekday: 'narrow' }) }})
       <div class="flex flex-wrap">
         <div v-for="(item, index) in list.data" :key="index" class="w-[24%] p-2 mx-2 my-2 border rounded-md bg-gray-50 [&:nth-child(4n+1)]:ml-0 [&:nth-child(4n)]:mr-0">
           <div class="flex items-center">
@@ -46,8 +46,8 @@
             申請人：<span>{{ item.apply_user }}</span>
           </div>
           <div v-if="permission === 'admin'" class="mt-2 ml-4 text-sm text-gray-600">
-            <input :id="`success_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`success_${item.id}`"><label :for="`success_${item.id}`">通過</label>
-            <input :id="`fail_${item.id}`" v-model="status" class="mx-1" :name="`check_${item.id}`" type="radio" :value="`fail_${item.id}`"><label :for="`fail_${item.id}`">駁回</label>
+            <input :id="`success_${item.id}`" v-model="status" class="mx-1" :group="`check_${item.id}`" type="radio" :value="`success_${item.id}`"><label :for="`success_${item.id}`">通過</label>
+            <input :id="`fail_${item.id}`" v-model="status" class="mx-1" :group="`check_${item.id}`" type="radio" :value="`fail_${item.id}`"><label :for="`fail_${item.id}`">駁回</label>
             <button class="px-2 ml-2 border rounded-lg border-neutral-300 bg-neutral-100" @click="checkOrder()">確認</button>
           </div>
         </div>
@@ -65,33 +65,16 @@
   </div>  
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+<script setup>
+import { ref, computed, onMounted, } from 'vue'
 const user = localStorage.getItem('user')
 const permission = localStorage.getItem('permission')
 const datas = localStorage.getItem('datas') ? JSON.parse(localStorage.getItem('datas') || '') : ''
-const viewSelfData = ref<ObjectOfDatas[]>([{ date: '', data: [] }])
-const filterData = ref<ObjectOfDatas[]>([{ date: '', data: [] }])
-interface ObjectofTime {
-  hours?: number | string
-  minutes?: number | string
-  seconds?: number | string
-}
-interface ObjectOfDatas {
-  id?: number
-  title?: string,
-  date?: string | Date,
-  startTime: ObjectofTime
-  endTime: ObjectofTime
-  department: string
-  attends: number
-  apply_user: string,
-  apply_date: number
-  status: string
-}
+const viewSelfData = ref([{ date: '', data: [] }])
+const filterData = ref([{ date: '', data: [] }])
 onMounted(() => {
   if ( datas.datas.length > 0) {
-    let tmpData = datas.datas.filter((item: { apply_user: string }) => {
+    let tmpData = datas.datas.filter((item) => {
       if (permission !== 'admin') return item.apply_user === user
       else return item
     })
@@ -116,10 +99,10 @@ onMounted(() => {
     filterData.value = viewSelfData.value
   }
 })
-let checked = ref<string>('-1')
-let status = ref<string>('')
+let checked = ref('-1')
+let status = ref('')
 const convertStatus = computed(() => { 
-  return function (val: string) {
+  return function (val) {
     switch (val) {
       case '0':
         return '審核中'
@@ -131,7 +114,7 @@ const convertStatus = computed(() => {
   }
 })
 const convertDep = computed(() => { 
-  return function (val: string) {
+  return function (val) {
     switch (val) {
       case '0':
         return '總經理室'
@@ -147,14 +130,14 @@ const convertDep = computed(() => {
   }
 })
 const check = computed(() => {
-  return function (status: string) {
+  return function (status) {
     checked.value = status
     const tmpData = JSON.parse(JSON.stringify(viewSelfData.value))
     if (status === '-1') filterData.value = viewSelfData.value
     else {
       filterData.value = tmpData.reduce((previousValue, item) => {
         let one = status
-        item.data = item.data.filter((item2: { status: string }) => item2.status === one)
+        item.data = item.data.filter((item2) => item2.status === one)
         if (item.data.length > 0) previousValue.push(item)
         return previousValue
       },[])
@@ -162,10 +145,10 @@ const check = computed(() => {
   }
 })
 const checkOrder = () => {
-  const checkStatus: string = status.value.split('_')[0]
-  const id: string = status.value.split('_')[1]
-  viewSelfData.value.map((item: { data: ObjectOfDatas[]}) => {
-    item.data.map((item: { id: number, status: string}) => {
+  const checkStatus = status.value.split('_')[0]
+  const id = status.value.split('_')[1]
+  viewSelfData.value.map((item) => {
+    item.data.map((item) => {
       if (item.id === Number(id)) {
       switch(checkStatus) {
         case 'success':
@@ -181,7 +164,7 @@ const checkOrder = () => {
     return item
   })
 
-  datas.datas.map((item: { id: number, status: string }) => {
+  datas.datas.map((item) => {
     if (item.id === Number(id)) {
       console.log('checkStatus', checkStatus, item.status)
       switch(checkStatus) {
